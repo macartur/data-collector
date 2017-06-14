@@ -120,7 +120,7 @@ class SensorValuesController < ApplicationController
   # @note http://localhost:3000/resources/data
   def resources_data
     generate_response
-    rescue Exception
+    rescue => e
       render json: { error: 'Internal server error' }, status: 500
   end
 
@@ -129,13 +129,13 @@ class SensorValuesController < ApplicationController
                      .where(platform_resource_id: @retrieved_resource.id)
 
     generate_response
-    rescue Exception
+    rescue => e
       render json: { error: 'Internal server error' }, status: 500
   end
 
   def resources_data_last
     generate_response
-    rescue Exception
+    rescue => e
       render json: { error: 'Internal server error' }, status: 500
   end
 
