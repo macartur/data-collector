@@ -32,7 +32,7 @@ class SensorValuesController < ApplicationController
       next if arg.nil? || arg.is_positive_int?
       render :json => {
         error: 'Bad Request: pagination args not valid',
-        status: 400 
+        status: 400
       }
       break # Prevents DoubleRenderError
     end
@@ -53,18 +53,16 @@ class SensorValuesController < ApplicationController
     @start_date = params[:start_range]
     @end_date = params[:end_range]
 
-    begin
-      unless @start_date.nil?
-        @sensor_values = @sensor_values
-                              .where(:date.gte => DateTime.parse(@start_date))
-      end
-      unless @end_date.nil?
-        @sensor_values = @sensor_values
-                               .where(:date.lte => DateTime.parse(@end_date))
-      end
+    unless @start_date.nil?
+      @sensor_values = @sensor_values
+                       .where(:date.gte => DateTime.parse(@start_date))
+    end
+    unless @end_date.nil?
+      @sensor_values = @sensor_values
+                       .where(:date.lte => DateTime.parse(@end_date))
+    end
     rescue
       render json: { error: 'Bad Request: resource not found' }, status: 400
-    end
   end
 
   def filter_by_capabilities
@@ -114,6 +112,7 @@ class SensorValuesController < ApplicationController
     else
       sensor_trim |= cap_values
     end
+    sensor_trim
   end
 
   # Return all resources with all their capabilities. Finally, each capability
@@ -127,7 +126,7 @@ class SensorValuesController < ApplicationController
 
   def resource_data
     @sensor_values = @sensor_values
-                          .where(platform_resource_id: @retrieved_resource.id)
+                     .where(platform_resource_id: @retrieved_resource.id)
 
     generate_response
     rescue Exception
@@ -142,11 +141,9 @@ class SensorValuesController < ApplicationController
 
   def resource_data_last
     @sensor_values = @sensor_values
-                          .where(platform_resource_id: @retrieved_resource.id)
+                     .where(platform_resource_id: @retrieved_resource.id)
 
-    generate_response
-    rescue Exception
-      render json: { error: 'Internal server error' }, status: 500
+    resources_data_last
   end
 
   private
