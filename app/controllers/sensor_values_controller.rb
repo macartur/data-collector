@@ -118,53 +118,43 @@ class SensorValuesController < ApplicationController
   # has all the historical values associated with it.
   # @note http://localhost:3000/resources/data
   def resources_data
-    begin
-      generate_response
+    generate_response
     rescue Exception
       render json: { error: 'Internal server error' }, status: 500
-    end
   end
 
   def resource_data
-    begin
-      @sensor_values = @sensor_values.where(platform_resource_id: @retrieved_resource.id)
+    @sensor_values = @sensor_values.where(platform_resource_id: @retrieved_resource.id)
 
-      generate_response
+    generate_response
     rescue Exception
       render json: { error: 'Internal server error' }, status: 500
-    end
   end
 
   def resources_data_last
-    begin
-      generate_response
+    generate_response
     rescue Exception
       render json: { error: 'Internal server error' }, status: 500
-    end
   end
 
   def resource_data_last
-    begin
-      @sensor_values = @sensor_values.where(platform_resource_id: @retrieved_resource.id)
+    @sensor_values = @sensor_values.where(platform_resource_id: @retrieved_resource.id)
 
-      generate_response
+    generate_response
     rescue Exception
       render json: { error: 'Internal server error' }, status: 500
-    end
   end
 
   private
 
   def find_platform_resource
-    begin
-      # params[:uuid] gets from the uri, while sensor_value_params gets
-      # it from the json sent
-      @retrieved_resource = PlatformResource.find_by(uuid: params[:uuid])
-      raise Mongoid::Errors::DocumentNotFound unless @retrieved_resource
+    # params[:uuid] gets from the uri, while sensor_value_params gets
+    # it from the json sent
+    @retrieved_resource = PlatformResource.find_by(uuid: params[:uuid])
+    raise Mongoid::Errors::DocumentNotFound unless @retrieved_resource
 
     rescue Mongoid::Errors::DocumentNotFound
       render json: { error: 'Resource not found' }, status: 404
-    end
   end
 
   def sensor_value_params
