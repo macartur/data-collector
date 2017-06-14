@@ -29,11 +29,10 @@ class SensorValuesController < ApplicationController
     limit = '1000' unless limit.to_i <= 1000
 
     [limit, start].each do |arg|
-      if !arg.nil? && !arg.is_positive_int?
-        render :json => { error: 'Bad Request: pagination args not valid' },
-               status: 400
-        break # Prevents DoubleRenderError
-      end
+      next if arg.nil? || arg.is_positive_int?
+      render :json => { error: 'Bad Request: pagination args not valid' },
+                        status: 400
+      break # Prevents DoubleRenderError
     end
 
     @sensor_values = @sensor_values.limit(limit) unless limit.nil?
@@ -76,26 +75,25 @@ class SensorValuesController < ApplicationController
     capability_hash = sensor_value_params[:range]
     sensor_trim = nil
     capability_hash.each do |capability_name, range_hash|
-      if capability_name
-        cap_values = @sensor_values.where(capability: capability_name)
-        equal = range_hash['equal']
-        if !equal.blank?
-          cap_values = cap_values.where(value: equal)
-          sensor_trim = concat_value(sensor_trim, cap_values)
-        else
-          min = range_hash['min']
-          max = range_hash['max']
-          filtered = false
-          if !max.blank? && max.is_float?
-            cap_values = cap_values.where(:f_value.lte => max)
-            filtered = true
-          end
-          if !min.blank? && min.is_float?
-            filtered = true
-            cap_values = cap_values.where(:f_value.gte => min)
-          end
-          sensor_trim = concat_value(sensor_trim, cap_values) if filtered
+      next if !capability_name
+      cap_values = @sensor_values.where(capability: capability_name)
+      equal = range_hash['equal']
+      if !equal.blank?
+        cap_values = cap_values.where(value: equal)
+        sensor_trim = concat_value(sensor_trim, cap_values)
+      else
+        min = range_hash['min']
+        max = range_hash['max']
+        filtered = false
+        if !max.blank? && max.is_float?
+          cap_values = cap_values.where(:f_value.lte => max)
+          filtered = true
         end
+        if !min.blank? && min.is_float?
+          filtered = true
+          cap_values = cap_values.where(:f_value.gte => min)
+        end
+        sensor_trim = concat_value(sensor_trim, cap_values) if filtered
       end
     end
 
@@ -110,7 +108,7 @@ class SensorValuesController < ApplicationController
     if sensor_trim.nil?
       sensor_trim = cap_values
     else
-      sensor_trim = sensor_trim | cap_values
+      sensor_trim |= cap_values
     end
   end
 
