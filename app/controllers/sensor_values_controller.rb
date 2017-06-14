@@ -128,15 +128,11 @@ class SensorValuesController < ApplicationController
     @sensor_values = @sensor_values
                      .where(platform_resource_id: @retrieved_resource.id)
 
-    generate_response
-    rescue => e
-      render json: { error: 'Internal server error: ' + e }, status: 500
+    resources_data
   end
 
   def resources_data_last
-    generate_response
-    rescue => e
-      render json: { error: 'Internal server error: ' + e }, status: 500
+    resources_data
   end
 
   def resource_data_last
