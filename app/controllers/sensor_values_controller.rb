@@ -31,8 +31,9 @@ class SensorValuesController < ApplicationController
     [limit, start].each do |arg|
       next if arg.nil? || arg.is_positive_int?
       render :json => {
-        error: 'Bad Request: pagination args not valid' },
-        status: 400
+        error: 'Bad Request: pagination args not valid',
+        status: 400 
+      }
       break # Prevents DoubleRenderError
     end
 
@@ -54,12 +55,12 @@ class SensorValuesController < ApplicationController
 
     begin
       unless @start_date.nil?
-        @sensor_values = @sensor_values.
-                               where(:date.gte => DateTime.parse(@start_date))
+        @sensor_values = @sensor_values
+                              .where(:date.gte => DateTime.parse(@start_date))
       end
       unless @end_date.nil?
-        @sensor_values = @sensor_values.
-                               where(:date.lte => DateTime.parse(@end_date))
+        @sensor_values = @sensor_values
+                               .where(:date.lte => DateTime.parse(@end_date))
       end
     rescue
       render json: { error: 'Bad Request: resource not found' }, status: 400
@@ -78,7 +79,7 @@ class SensorValuesController < ApplicationController
     capability_hash = sensor_value_params[:range]
     sensor_trim = nil
     capability_hash.each do |capability_name, range_hash|
-      next if !capability_name
+      next unless capability_name
       cap_values = @sensor_values.where(capability: capability_name)
       equal = range_hash['equal']
       if !equal.blank?
@@ -125,8 +126,8 @@ class SensorValuesController < ApplicationController
   end
 
   def resource_data
-    @sensor_values = @sensor_values.
-                          where(platform_resource_id: @retrieved_resource.id)
+    @sensor_values = @sensor_values
+                          .where(platform_resource_id: @retrieved_resource.id)
 
     generate_response
     rescue Exception
@@ -140,8 +141,8 @@ class SensorValuesController < ApplicationController
   end
 
   def resource_data_last
-    @sensor_values = @sensor_values.
-                          where(platform_resource_id: @retrieved_resource.id)
+    @sensor_values = @sensor_values
+                          .where(platform_resource_id: @retrieved_resource.id)
 
     generate_response
     rescue Exception
