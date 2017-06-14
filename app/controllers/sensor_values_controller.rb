@@ -121,7 +121,7 @@ class SensorValuesController < ApplicationController
   def resources_data
     generate_response
     rescue => e
-      render json: { error: 'Internal server error' }, status: 500
+      render json: { error: 'Internal server error: ' + e }, status: 500
   end
 
   def resource_data
@@ -130,13 +130,13 @@ class SensorValuesController < ApplicationController
 
     generate_response
     rescue => e
-      render json: { error: 'Internal server error' }, status: 500
+      render json: { error: 'Internal server error: ' + e }, status: 500
   end
 
   def resources_data_last
     generate_response
     rescue => e
-      render json: { error: 'Internal server error' }, status: 500
+      render json: { error: 'Internal server error: ' + e }, status: 500
   end
 
   def resource_data_last
